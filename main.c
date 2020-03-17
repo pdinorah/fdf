@@ -6,7 +6,7 @@
 /*   By: pdinorah <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/15 17:07:53 by pdinorah          #+#    #+#             */
-/*   Updated: 2020/02/27 19:18:30 by pdinorah         ###   ########.fr       */
+/*   Updated: 2020/02/28 20:28:39 by pdinorah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 int		main(int argc, char **argv)
 {
-	int		bpp;
-	int		size_line;
-	int		endian;
 	t_param	param;
 
 	if (argc == 2)
@@ -30,14 +27,16 @@ int		main(int argc, char **argv)
 		param.img_ptr = mlx_new_image(param.mlx_ptr, IMG_WIDTH, IMG_HEIGHT);
 		param.win_ptr = mlx_new_window(param.mlx_ptr, 1920, 1080, "mlx 42");
 		param.img_data = (int *)mlx_get_data_addr(param.img_ptr,
-			&bpp, &size_line, &endian);
+			&(param.bpp), &(param.size_line), &(param.endian));
 		draw_background(&param);
+		first_move(&param);
+		draw_picture(&param, -1, 0);
 		mlx_put_image_to_window(param.mlx_ptr,
 			param.win_ptr, param.img_ptr, 0, 0);
 		mlx_hook(param.win_ptr, 2, 2, &hook_keydown, &param);
 		mlx_hook(param.win_ptr, 4, 2, &hook_scroll, &param);
 		mlx_loop(param.mlx_ptr);
-	//	mem_delete(&param);
+		mem_delete(&param);
 	}
 	return (0);
 }
@@ -92,19 +91,28 @@ int		hook_scroll(int button, int x, int y, t_param *param)
 
 void	mem_delete(t_param *param)
 {
-	int i;
-	int j;
-
-	i = -1;
 	free(param->win_ptr);
 	free(param->mlx_ptr);
 	free(param->img_ptr);
 	free(param->img_data);
-	while (++i < IMG_HEIGHT)
+	free(&param);
+}
+
+void 	first_move(t_param *param)
+{
+	int i;
+	int j;
+
+	i = -1;
+	while (++i < param->height)
 	{
 		j = -1;
-		while (++j < IMG_WIDTH)
-			free(param->map[i][j]);
+		while (++j < param->width)
+		{
+			//param->map[i][j].x_first += 540;
+			//param->map[i][j].y_first += 980;
+			param->map[i][j].x_end += 540;
+			param->map[i][j].y_end += 980;
+		}
 	}
-	free(&param);
 }

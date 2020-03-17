@@ -12,9 +12,9 @@
 
 NAME = fdf
 
-SRC = main.c draw_the_line.c parser.c draw.c projection.c
+SRC = main.c draw_the_line.c parser.c draw.c projection.c preparings.c
 
-OBJ = main.o draw_the_line.o parser.o draw.o projection.o
+OBJ = main.o draw_the_line.o parser.o draw.o projection.o preparings.o
 
 LIB_FLAG = -Llibft/ -lft
 

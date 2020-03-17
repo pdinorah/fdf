@@ -12,52 +12,47 @@
 
 #include "header.h"
 
-int		line_counter(int fd)
+int 	transform_10(char *str)
 {
-	int		reader;
-	char	buff[2];
-	int		counter;
-	int		check;
+	int		i;
+	int		result;
+	int 	coeff;
 
-	counter = 0;
-	check = 0;
-	while ((reader = read(fd, buff, 1)) > 0)
+	i = 6;
+	coeff = 1;
+	result = 0;
+	while (str[--i])
 	{
-		if (buff[0] == '\n')
-		{
-			counter++;
-			check = 1;
-		}
-		else
-			check = 0;
+		result += coeff * (str[i] + 48);
+		coeff *= 16;
 	}
-	if (check == 0)
-		counter++;
-	return (counter);
+	return (result);
 }
 
-int		point_counter(int fd)
+int		parse_color(char *line)
 {
-	int		reader;
-	char	buff[2];
-	int		counter;
-	int		checker;
+	int		x;
+	int		y;
+	int 	l;
+	char	*color;
 
-	counter = 0;
-	checker = 1;
-	while ((reader = read(fd, buff, 1)) > 0)
+	l = -1;
+	color = (char *)malloc(sizeof(char) * 6);
+	x = 0;
+	while (line[x] && line[x] != ',')
+		x++;
+	if (line[++x] != '0' || !(line[x]))
+		return (0);
+	if (line[++x] != 'x')
+		return (0);
+	y = x + 7;
+	while (line[++x] && x < y)
 	{
-		if (buff[0] == '\n')
-			break ;
-		if (buff[0] == ' ' && checker == 1)
-		{
-			counter++;
-			checker = 0;
-		}
-		else if (buff[0] != ' ')
-			checker = 1;
+		color[++l] = line[x];
 	}
-	return (counter + 1);
+	if (x < y)
+		return (0);
+	return (transform_10(color));
 }
 
 void	second_parse(t_param *param)
@@ -73,10 +68,10 @@ void	second_parse(t_param *param)
 		j = -1;
 		while (++j < param->width)
 		{
-			param->map[i][j][0] = (i - param->height / 2) * distance;
-			param->map[i][j][1] = (-1) * (j - param->width / 2) * distance;
-			param->map[i][j][3] = (i - param->width / 2) * distance;
-			param->map[i][j][4] = (j - param->height / 2) * distance;
+			param->map[i][j].x_first = (i - param->height / 2) * distance;
+			param->map[i][j].y_first = (-1) * (j - param->width / 2) * distance;
+			param->map[i][j].x_end = (i - param->width / 2) * distance;
+			param->map[i][j].y_end = (j - param->height / 2) * distance;
 		}
 	}
 }
@@ -96,8 +91,8 @@ int		map_parse(t_param *param, int fd)
 		{
 			if (param->x2 > param->width - 1)
 				return (1);
-			param->map[param->x1][param->x2][2] =
-				ft_atoi(array[param->y1]) * 10;
+			param->map[param->x1][param->x2].z_first = ft_atoi(array[param->y1]) * 10;
+			param->map[param->x1][param->x2].color = parse_color(array[param->y1]);
 			param->x2++;
 		}
 		param->x1++;
@@ -112,29 +107,17 @@ int		map_parse(t_param *param, int fd)
 
 void	map_memory(char *arg, int fd, t_param *param)
 {
-	int		j;
 	int		i;
 
 	i = 0;
 	param->height = line_counter(fd);
-	param->map = (float***)malloc((param->height) * sizeof(float**));
+	param->map = (t_point **)malloc((param->height) * sizeof(t_point *));
 	fd = open(arg, O_RDONLY);
 	param->width = point_counter(fd);
 	while (i < param->height)
 	{
 		fd = open(arg, O_RDONLY);
-		param->map[i] = (float**)malloc((param->width) * sizeof(float*));
-		i++;
-	}
-	i = 0;
-	while (i < param->height)
-	{
-		j = 0;
-		while (j < param->width)
-		{
-			param->map[i][j] = (float*)malloc(5 * sizeof(float));
-			j++;
-		}
+		param->map[i] = (t_point *)malloc((param->width) * sizeof(t_point));
 		i++;
 	}
 }

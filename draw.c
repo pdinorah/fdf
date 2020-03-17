@@ -6,7 +6,7 @@
 /*   By: pdinorah <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/26 20:34:29 by pdinorah          #+#    #+#             */
-/*   Updated: 2020/02/26 22:23:36 by pdinorah         ###   ########.fr       */
+/*   Updated: 2020/02/28 20:24:39 by pdinorah         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@ void	draw_picture(t_param *param, int i, int j)
 		j = -1;
 		while (++j < param->width - 1)
 		{
-			param->x1 = param->map[i][j][3];
-			param->x2 = param->map[i][j + 1][3];
-			param->y1 = param->map[i][j][4];
-			param->y2 = param->map[i][j + 1][4];
+			param->x1 = param->map[i][j].y_end;
+			param->x2 = param->map[i][j + 1].y_end;
+			param->y1 = param->map[i][j].x_end;
+			param->y2 = param->map[i][j + 1].x_end;
+			//param->current.color = param->map[i][j].color;
 			draw_the_line(param, 0);
 		}
 	}
@@ -32,10 +33,11 @@ void	draw_picture(t_param *param, int i, int j)
 		j = -1;
 		while (++j < param->width)
 		{
-			param->x1 = param->map[i][j][3];
-			param->x2 = param->map[i + 1][j][3];
-			param->y1 = param->map[i][j][4];
-			param->y2 = param->map[i + 1][j][4];
+			param->x1 = param->map[i][j].y_end;
+			param->x2 = param->map[i + 1][j].y_end;
+			param->y1 = param->map[i][j].x_end;
+			param->y2 = param->map[i + 1][j].x_end;
+			//param->current.color = param->map[i][j].color;
 			draw_the_line(param, 0);
 		}
 	}
@@ -52,8 +54,9 @@ void	zoom_up(t_param *param)
 		j = -1;
 		while (++j < param->width)
 		{
-			param->map[i][j][0] *= 1.1;
-			param->map[i][j][1] *= 1.1;
+			param->map[i][j].x_first *= 1.1;
+			param->map[i][j].y_first *= 1.1;
+			param->map[i][j].z_first *= 1.1;
 		}
 	}
 }
@@ -69,8 +72,9 @@ void	zoom_down(t_param *param)
 		j = -1;
 		while (++j < param->width)
 		{
-			param->map[i][j][0] /= 1.1;
-			param->map[i][j][1] /= 1.1;
+			param->map[i][j].x_first /= 1.1;
+			param->map[i][j].y_first /= 1.1;
+			param->map[i][j].z_first /= 1.1;
 		}
 	}
 }

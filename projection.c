@@ -24,11 +24,11 @@ void	rotate_x(t_param *param, double alpha)
 		j = -1;
 		while (++j < param->width)
 		{
-			previous_y = param->map[i][j][1];
-			param->map[i][j][1] = previous_y * cos(alpha) +
-				param->map[i][j][2] * sin(alpha);
-			param->map[i][j][2] = -previous_y * sin(alpha) +
-				param->map[i][j][2] * cos(alpha);
+			previous_y = param->map[i][j].y_first;
+			param->map[i][j].y_first = previous_y * cos(alpha) +
+				param->map[i][j].z_first * sin(alpha);
+			param->map[i][j].z_first = -previous_y * sin(alpha) +
+				param->map[i][j].z_first * cos(alpha);
 		}
 	}
 }
@@ -45,11 +45,11 @@ void	rotate_y(t_param *param, double beta)
 		j = -1;
 		while (++j < param->width)
 		{
-			previous_x = param->map[i][j][0];
-			param->map[i][j][0] = previous_x * cos(beta) +
-				param->map[i][j][2] * sin(beta);
-			param->map[i][j][2] = -previous_x * sin(beta) +
-				param->map[i][j][2] * cos(beta);
+			previous_x = param->map[i][j].x_first;
+			param->map[i][j].x_first = previous_x * cos(beta) +
+				param->map[i][j].z_first * sin(beta);
+			param->map[i][j].z_first = -previous_x * sin(beta) +
+				param->map[i][j].z_first * cos(beta);
 		}
 	}
 }
@@ -67,12 +67,12 @@ void	iso(t_param *param)
 		j = -1;
 		while (++j < param->width)
 		{
-			previous_x = param->map[i][j][0];
-			previous_y = param->map[i][j][1];
-			param->map[i][j][3] = (previous_x - previous_y) *
-				cos(0.523599) + 980;
-			param->map[i][j][4] = (previous_x + previous_y) *
-				sin(0.523599) + 540;
+			previous_x = param->map[i][j].x_first;
+			previous_y = param->map[i][j].y_first;
+			param->map[i][j].x_end = (previous_x - previous_y) *
+				cos(0.523599) + 540;
+			param->map[i][j].y_end = (previous_x + previous_y) *
+				sin(0.523599) + 980;
 		}
 	}
 }

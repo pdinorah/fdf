@@ -12,6 +12,38 @@
 
 #include "header.h"
 
+int		get_light(int start, int end, double percentage)
+{
+	return ((int)((1 - percentage) * start + percentage * end));
+}
+
+double percent(int start, int end, int current)
+{
+	double placement;
+	double distance;
+	placement = current - start;
+	distance = end - start;
+	return ((distance == 0) ? 1.0 : (placement / distance));
+}
+
+int		get_color(t_point current, t_point start, t_point end, t_point delta)
+{
+	int		red;
+	int		green;
+	int		blue;
+	double	percentage;
+	if (current.color == end.color)
+		return (current.color);
+	if (delta.x_end > delta.y_end)
+		percentage = percent(start.x_end, end.x_end, current.x_end);
+	else
+		percentage = percent(start.y_end, end.y_end, current.y_end);
+	red = get_light((start.color >> 16) & 0xFF, (end.color >> 16) & 0xFF, percentage);
+	green = get_light((start.color >> 8) & 0xFF, (end.color >> 8) & 0xFF, percentage);
+	blue = get_light(start.color & 0xFF, end.color & 0xFF, percentage);
+	return ((red << 16) | (green << 8) | blue);
+}
+
 void	draw_the_line(t_param *param, int error2)
 {
 	param->deltax = abs(param->x2 - param->x1);
@@ -20,12 +52,12 @@ void	draw_the_line(t_param *param, int error2)
 	param->signy = param->y1 < param->y2 ? 1 : -1;
 	param->error = param->deltax - param->deltay;
 	if (param->x1 >= 0 && param->y1 >= 0 && param->x1 <
-			IMG_WIDTH && param->y1 < IMG_HEIGHT)
+											IMG_WIDTH && param->y1 < IMG_HEIGHT)
 		param->img_data[param->y1 * IMG_WIDTH + param->x1] = 0x5100FF;
 	while (param->x1 != param->x2 || param->y1 != param->y2)
 	{
 		if (param->x1 >= 0 && param->y1 >= 0 && param->x1 <
-				IMG_WIDTH && param->y1 < IMG_HEIGHT)
+												IMG_WIDTH && param->y1 < IMG_HEIGHT)
 			param->img_data[param->y1 * IMG_WIDTH + param->x1] = 0x5100FF;
 		error2 = param->error * 2;
 		if (error2 > -(param->deltay))
@@ -40,6 +72,8 @@ void	draw_the_line(t_param *param, int error2)
 		}
 	}
 }
+
+
 
 void	draw_background(t_param *param)
 {
